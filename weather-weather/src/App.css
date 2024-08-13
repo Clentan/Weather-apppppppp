@@ -1,0 +1,56 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.loader{
+  animation: loader 1s alternate;
+}
+.weather-item {
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.weather-item.fade-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.weather-item.fade-out {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.previous
+{
+  margin-left: 5px;
+}
+.next
+{
+  margin-right: 10px;
+}

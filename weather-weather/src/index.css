@@ -1,0 +1,152 @@
+.First-div
+{
+  display: flex;
+  justify-content: space-around;
+  background-color: rgb(53, 194, 213);
+}
+ul{
+  display: flex;
+  gap: 70px;
+}
+body{
+  margin: 0;
+  padding: 0;
+  background-color: #888888;
+}
+
+/* This is for the box with the current weather update */
+.Current
+{
+  text-align: center;
+  display: block;
+  background-color: aqua;
+  width: 300px;
+  height: 300px;
+  margin-left: 40%;
+  border-radius: 10px;
+  text-transform: uppercase;
+  gap:100px;
+  border: 1px solid;
+  padding: 10px;
+  box-shadow: 5px 10px #030c0f;
+  
+  
+
+}
+li
+{
+  list-style: none;
+  gap:60px;
+  margin: 10px;
+}
+.Calender
+{
+  margin-left: 80%;
+
+}
+input
+{
+  width: 230px;
+  height: 25px;
+  margin-top: 10px;
+  margin-left: 10px;
+  border-radius: 10px;
+}
+.day{
+  background-color: aqua;
+  align-items: center;
+  margin-right: 10px;
+  width: 150px;
+  box-shadow: 5px 10px #030c0f;
+  border-radius: 10px;
+  height: 120px;
+
+}
+span{
+  text-align: center;
+  margin-left: 40%;
+}
+.day:hover
+{
+
+  height: 200px;
+  position: relative;
+  top: -30px;
+
+}
+
+h2
+{
+ 
+  align-items: center;
+  text-align:center;
+  
+}
+button
+{
+  border-radius: 10px;
+}
+button:active
+{
+  background-color: aqua;
+}
+input
+{
+  font-weight: bolder;
+  text-decoration: aqua;
+  font-style: italic;
+  text-transform: uppercase;
+}
+.app
+
+{
+  align-items: center;
+
+}
+h1
+{
+  text-align: center;
+}
+.Search_city
+{
+  margin-left: 40%;
+}
+.hourly-weather
+{
+  position:absolute;
+  top: 10px;
+  margin-left: 80%;
+  margin-top: 130px;
+  background-color: aqua;
+  width: 170px;
+  height: 170px;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: bolder;
+  text-align: center;
+  color: black;
+  box-shadow: 5px 10px #030c0f;
+  
+}
+.large-icon
+{
+  font-size: 50px;
+}
+p{
+  text-align: center;
+
+}
+/* components/Footer.css */
+.footer {
+  background-color: aqua;
+  color: rgb(15, 14, 14);
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+
+
