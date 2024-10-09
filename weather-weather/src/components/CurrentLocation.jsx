@@ -18,27 +18,32 @@ export default function CurrentLocation() {
                     try {
                         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appid}&units=metric`);
                         const data = await response.json();
-                       
-                        setLocation(data);
-                        setIsLoading(false);
                         
-                        // Save weather data to localStorage
-                        saveToLocalStorage(data);
+                        // Check if the location was found
+                        if (data.cod === 200) {
+                            setLocation(data);
+                            setIsLoading(false);
+                            
+                            // Save weather data to localStorage
+                            saveToLocalStorage(data);
 
-                        // Calculate and set temperature in Fahrenheit
-                        calculate(data);
-
+                            // Calculate and set temperature in Fahrenheit
+                            calculate(data);
+                        } else {
+                            setError('Location not found. Please ensure your location services are enabled.');
+                            setIsLoading(false);
+                        }
                     } catch (error) {
-                        setError('Error fetching the location data.');
+                        setError('Error fetching the location data. Please check your connection.');
                         setIsLoading(false);
                         console.error('Error fetching the location data:', error);
                     }
-                }, () => {
-                    alert('No location detected 😔');
-                    loadFromLocalStorage();
+                }, (error) => {
+                    handleGeolocationError(error);
+                    loadFromLocalStorage(); // Fallback to cached data if available
                 });
             } else {
-                alert('Geolocation is not supported by this browser.');
+                setError('Geolocation is not supported by this browser.');
                 loadFromLocalStorage();
             }
         }
@@ -46,13 +51,29 @@ export default function CurrentLocation() {
         fetchCurrentLocation();
     }, []);
 
+    function handleGeolocationError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                setError("Location access denied. Please allow location permissions in your browser.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                setError("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                setError("Request to get location timed out.");
+                break;
+            default:
+                setError("An unknown error occurred.");
+                break;
+        }
+    }
+
     function calculate(location) {
         const tempCelsius = location.main.temp;
         const tempFahrenheit = (tempCelsius * 1.8) + 32;
         setFahrenheit(tempFahrenheit); // Store Fahrenheit temperature
-        // Optionally, you could store Celsius as well if needed
     }
-    
+
     function saveToLocalStorage(data) {
         const weatherData = {
             location: data,
@@ -69,10 +90,7 @@ export default function CurrentLocation() {
             // Use the cached data if it's less than 6 hours old
             if (Date.now() - timestamp < 6 * 60 * 60 * 1000) {
                 setLocation(location);
-
-                // Calculate and set temperature in Fahrenheit
                 calculate(location);
-
             } else {
                 setError('Cached data is too old. Please connect to the internet to get the latest weather information.');
             }
@@ -84,7 +102,6 @@ export default function CurrentLocation() {
 
     function toggleTemperatureUnit() {
         setTemperatureUnit((prevUnit) => (prevUnit === 'C' ? 'F' : 'C'));
-        //using letters tp print what is needed
     }
 
     // Determine the temperature to display based on the selected unit
@@ -111,12 +128,11 @@ export default function CurrentLocation() {
                             <li>Humidity: {location.main.humidity}%</li>
                             <li>Wind Speed: {location.wind.speed} m/s</li>
                             <button 
-                        className='change'
-                        onClick={toggleTemperatureUnit}>
-                            Switch to {temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}
-                        </button>
+                                className='change'
+                                onClick={toggleTemperatureUnit}>
+                                Switch to {temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}
+                            </button>
                         </ul>
-                       
                     </>
                 )
             )}

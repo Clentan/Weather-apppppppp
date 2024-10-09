@@ -173,6 +173,7 @@ function HourlyWeather({ hours }) {
   return (
     <div className="hourly-weather" >
       <div className={`weather-item ${animationClass}`}>
+        <h3>Hourly Weather Update</h3>
         <h3>{hours[currentIndex].time}</h3>
         <p>{hours[currentIndex].temperature}°</p>
         <p>{hours[currentIndex].description}</p>
