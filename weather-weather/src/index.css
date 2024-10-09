@@ -153,6 +153,6 @@ p{
   display: flex; /* Make it a flex container */
   flex-direction: column; /* Arrange children vertically */
   align-items: center; /* Center children horizontally */
-  margin-top: 20px; /* Optional: Add some spacing from the top */
+  margin-top: 15px; /* Optional: Add some spacing from the top */
 }
 
