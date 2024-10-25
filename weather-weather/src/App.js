@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie"; // Import js-cookie
 import Header from "./components/Header";
 import CurrentLocation from "./components/CurrentLocation";
 import Footer from "./components/Footer"; // Import the Footer component
 import "./App.css"; // Ensure you import your CSS file
-
 
 function getWeatherIcon(wmoCode) {
   const icons = new Map([
@@ -45,13 +45,25 @@ function App() {
   const [displayLocation, setDisplayLocation] = useState("");
   const [weather, setWeather] = useState({});
   const [hourlyWeather, setHourlyWeather] = useState([]);
+  const [error, setError] = useState(null); // Error state
 
-  async function fetchWeather() {
+  // Get the saved location from cookies if it exists
+  useEffect(() => {
+    const savedLocation = Cookies.get("location");
+    if (savedLocation) {
+      setLocation(savedLocation);
+      fetchWeather(savedLocation); // Automatically fetch weather for saved location
+    }
+  }, []);
+
+  async function fetchWeather(overrideLocation = null) {
     try {
       setIsLoading(true);
+      setError(null); // Reset error state before fetching
 
+      const loc = overrideLocation || location; // Use override location if provided
       const geoRes = await fetch(
-        `https://geocoding-api.open-meteo.com/v1/search?name=${location}`
+        `https://geocoding-api.open-meteo.com/v1/search?name=${loc}`
       );
       const geoData = await geoRes.json();
       console.log(geoData);
@@ -68,10 +80,18 @@ function App() {
       );
       const weatherData = await weatherRes.json();
 
+      if (!weatherData.daily || !weatherData.hourly) {
+        throw new Error("Weather not found");
+      }
+
       setWeather(weatherData.daily);
       setHourlyWeather(weatherData.hourly);
+
+      // Save location in a cookie
+      Cookies.set("location", loc, { expires: 7 }); // Expires in 7 days
     } catch (err) {
       console.error(err);
+      setError(err.message); // Set error message if fetching fails
     } finally {
       setIsLoading(false);
     }
@@ -88,13 +108,18 @@ function App() {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
-        <button onClick={fetchWeather}>Get weather</button>
+        <button onClick={() => fetchWeather()}>Search</button>
         {isLoading && <p className="loader">Loading...</p>}
       </div>
-      {weather.weathercode && (
+
+      {/* Display error message if weather not found */}
+      {error && <p className="error">Oops, {error}</p>}
+
+      {/* Display weather if found */}
+      {!error && weather.weathercode && (
         <Weather weather={weather} location={displayLocation} hourlyWeather={hourlyWeather} />
       )}
-      <Footer /> {/* Add the Footer component */}
+  
     </div>
   );
 }
@@ -124,12 +149,13 @@ function Weather({ weather, location, hourlyWeather }) {
           />
         ))}
       </ul>
-      <HourlyWeather hours={hourlyWeather.time.map((time, i) => ({
-        time,
-        temperature: hourlyWeather.temperature_2m[i],
-        description: getWeatherIcon(hourlyWeather.weathercode[i]),
-      }))} />
-     
+      <HourlyWeather
+        hours={hourlyWeather.time.map((time, i) => ({
+          time,
+          temperature: hourlyWeather.temperature_2m[i],
+          description: getWeatherIcon(hourlyWeather.weathercode[i]),
+        }))}
+      />
     </div>
   );
 }
@@ -171,7 +197,7 @@ function HourlyWeather({ hours }) {
   };
 
   return (
-    <div className="hourly-weather" >
+    <div className="hourly-weather">
       <div className={`weather-item ${animationClass}`}>
         <h3>Hourly Weather Update</h3>
         <h3>{hours[currentIndex].time}</h3>
